@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: daaas-config
+  namespace: daaas
+data:
+  DJANGO_ENV: "production"
+  DJANGO_ALLOWED_HOSTS: "*.daaas.io,daaas.io"
+  POSTGRES_HOST: "postgres-svc"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "daaas"
+  REDIS_HOST: "redis-svc"
+  REDIS_PORT: "6379"
+  CELERY_BROKER_URL: "redis://redis-svc:6379/1"
+  CELERY_RESULT_BACKEND: "redis://redis-svc:6379/2"
+  AI_DEFAULT_PROVIDER: "openai"
+  LOG_LEVEL: "WARNING"

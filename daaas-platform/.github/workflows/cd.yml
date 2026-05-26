@@ -1,0 +1,81 @@
+name: CD Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.IMAGE_PREFIX }}/backend:${{ github.sha }},${{ env.IMAGE_PREFIX }}/backend:latest
+          target: production
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.IMAGE_PREFIX }}/frontend:${{ github.sha }},${{ env.IMAGE_PREFIX }}/frontend:latest
+          target: production
+
+  deploy:
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/daaas-backend backend=${{ env.IMAGE_PREFIX }}/backend:${{ github.sha }} -n daaas
+          kubectl set image deployment/daaas-frontend frontend=${{ env.IMAGE_PREFIX }}/frontend:${{ github.sha }} -n daaas
+          kubectl set image deployment/daaas-celery-worker celery-worker=${{ env.IMAGE_PREFIX }}/backend:${{ github.sha }} -n daaas
+          kubectl rollout status deployment/daaas-backend -n daaas
+          kubectl rollout status deployment/daaas-frontend -n daaas
