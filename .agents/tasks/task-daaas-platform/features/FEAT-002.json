@@ -1,0 +1,43 @@
+{
+  "id": "FEAT-002",
+  "type": "chore",
+  "description": "Create the complete project folder structure with placeholder/init files for the DAaaS platform, including backend (Django), frontend (React), infrastructure (Docker, K8s), and documentation directories. Each directory should have appropriate __init__.py, .gitkeep, or config stub files to establish the project skeleton.",
+  "status": "in_progress",
+  "steps": [
+    "Create the root project directory at /projects/sandbox/tts123/daaas-platform/ with top-level config files: .env.example, .gitignore, docker-compose.yml, docker-compose.prod.yml, Makefile, README.md",
+    "Create backend structure at daaas-platform/backend/ with: manage.py, requirements.txt, requirements-dev.txt, Dockerfile, pytest.ini, setup.cfg",
+    "Create Django project config at backend/config/ with: __init__.py, settings/ (base.py, development.py, production.py, testing.py), urls.py, wsgi.py, asgi.py, celery.py",
+    "Create backend apps: backend/apps/accounts/ (models, views, serializers, urls, permissions for user/org management)",
+    "Create backend apps: backend/apps/datasets/ (models, views, serializers, urls, tasks for data upload/storage/management)",
+    "Create backend apps: backend/apps/analytics/ (models, views, serializers, urls, tasks for data cleaning, analysis, visualization)",
+    "Create backend apps: backend/apps/ml_models/ (models, views, serializers, urls, tasks for ML model training/prediction/management)",
+    "Create backend apps: backend/apps/reports/ (models, views, serializers, urls, tasks for AI-powered report generation)",
+    "Create backend apps: backend/apps/billing/ (models, views, serializers, urls, webhooks for subscription/payment management)",
+    "Create backend apps: backend/apps/ai_gateway/ (providers/, router.py, streaming.py, fallback.py, token_tracker.py for unified AI interface)",
+    "Create backend apps: backend/apps/notifications/ (models, views, consumers.py for WebSocket real-time notifications)",
+    "Create backend common utilities: backend/common/ (utils.py, permissions.py, pagination.py, exceptions.py, middleware.py, mixins.py)",
+    "Create backend tests structure: backend/tests/ with subdirectories matching each app (test_accounts/, test_datasets/, test_analytics/, test_ml_models/, test_reports/, test_billing/, test_ai_gateway/) each with conftest.py and test files",
+    "Create frontend structure at daaas-platform/frontend/ with: package.json, tsconfig.json, vite.config.ts, Dockerfile, .env.example, index.html",
+    "Create frontend src at frontend/src/ with: main.tsx, App.tsx, vite-env.d.ts",
+    "Create frontend directories: src/components/ (common/, layout/, charts/, datasets/, analytics/, ml/, reports/, billing/), src/pages/, src/hooks/, src/services/ (api.ts, aiGateway.ts, websocket.ts), src/store/, src/types/, src/utils/, src/styles/",
+    "Create infrastructure directory: daaas-platform/infrastructure/ with: kubernetes/ (deployments/, services/, configmaps/, secrets/, ingress/), terraform/ (main.tf, variables.tf, outputs.tf, modules/), monitoring/ (prometheus.yml, grafana/dashboards/), nginx/ (nginx.conf)",
+    "Create CI/CD config: daaas-platform/.github/workflows/ with ci.yml, cd.yml, and daaas-platform/scripts/ with setup.sh, deploy.sh, migrate.sh, seed.sh",
+    "Create docs directory: daaas-platform/docs/ with api/, architecture/, deployment/, user-guide/ subdirectories with placeholder .md files"
+  ],
+  "acceptance_criteria": [
+    "All directories listed in the steps exist with appropriate files",
+    "Backend Django apps each have __init__.py, models.py, views.py, serializers.py, urls.py, and apps.py",
+    "Frontend has proper package.json with React/TypeScript dependencies listed",
+    "Docker files (Dockerfile for backend, frontend, and docker-compose.yml) exist with proper structure",
+    ".gitignore covers Python, Node.js, Docker, IDE, and environment files",
+    "AI gateway module has provider abstraction files (openai.py, anthropic.py, groq.py, ollama.py)",
+    "Kubernetes manifests directory structure exists",
+    "The folder structure matches what is documented in PLAN.md section 13"
+  ],
+  "verification": [
+    "Verify directory structure: find /projects/sandbox/tts123/daaas-platform -type f | head -100",
+    "Verify key files exist: ls /projects/sandbox/tts123/daaas-platform/backend/manage.py /projects/sandbox/tts123/daaas-platform/frontend/package.json /projects/sandbox/tts123/daaas-platform/docker-compose.yml"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

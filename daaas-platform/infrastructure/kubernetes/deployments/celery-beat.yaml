@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daaas-celery-beat
+  namespace: daaas
+  labels:
+    app: daaas
+    component: celery-beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daaas
+      component: celery-beat
+  template:
+    metadata:
+      labels:
+        app: daaas
+        component: celery-beat
+    spec:
+      containers:
+        - name: celery-beat
+          image: daaas/backend:latest
+          command: ["celery", "-A", "config", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]
+          envFrom:
+            - configMapRef:
+                name: daaas-config
+            - secretRef:
+                name: daaas-secrets
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "250m"
+              memory: "512Mi"
